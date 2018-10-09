@@ -1,0 +1,93 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "Health Check"
+  description: >-
+    The health API will be used to
+    
+    a) check the health of the connection between NG ESO and the BM Participant hosting the API 
+    
+    b) validate that the NGSO credentials are accepted by the BM Participant 
+    
+    
+    Please follow the "onborarding process" to get the proper Authorization to consume this API.
+  license:
+    name: NGESO
+    url: https://www.nationalgrideso.com/terms-and-conditions
+host: wa.api.xx.com
+basePath: /ngeso/v1
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+tags:
+  - name: Health
+    description: API Health
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Checks the health of the connectivity and credentials
+      responses:
+        200:
+          description: Successful Response
+          schema:
+              $ref: '#/definitions/Health'
+          examples:
+            application/json:
+              - version: "1.0"
+                timestamp: '2018-10-14T12:00:00.123Z'
+        400:
+          description: Feature Not Found
+          schema:
+              $ref: '#/definitions/Error'
+        401:
+          description: Unauthorized.
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Not Authorized"
+                code: '401'
+                detail: 'The Token has expired'
+                datetime: '2018-10-14T12:00:00.123Z'
+        500:
+          description: Technical Error
+          schema:
+              $ref: '#/definitions/Error'
+
+definitions:
+  Health:
+    title: Health
+    type: object
+    required:
+      - version
+      - timestamp
+    properties:
+      version:
+        type: string
+      timestamp:
+        type: string
+  Error:
+    type: object
+    required:
+      - code
+      - message
+      - detail
+      - datetime
+    properties:
+      message:
+        type: string
+        example: 'Error message'
+      code:
+        type: string
+        example: 'Error code'
+      detail:
+        type: string
+        example: 'Error detailed information'
+      datetime:
+        type: string
+        example: '2018-10-14T12:00:00.123Z'
