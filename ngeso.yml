@@ -3,11 +3,10 @@ info:
   version: '1.0'
   title: "EDT/EDL APIs"
   description: >-
-    The Electronic Data Transfer (EDT) and Electronic Dispatch Logging (EDL) APIs provides the means for the Market Participants to engage on the Balancing Mechanism to handle request sent by NGESO. The requests can be classified as:
+    The Electronic Data Transfer (EDT) and Electronic Dispatch Logging (EDL) APIs provides the means for the Market Participants to engage on the Balancing Mechanism, and send requests to NGESO. The requests can be classified as:
     
-      a) EDT. NGESO will send the Acceptance/Rejection to the Physical Notifications made by the Participant
-      b) EDT. NGESO will accept a Bids & Offers made earlier by the Participant
-      c) EDL. Receive instructions from NGESO to change the Participant´s position
+      a) EDT. A Participant will send the Initial Physical Notifications (IPN) and Final Physical Notifications (FPN) to NGESO
+      b) EDT. A participant will send its Bids & Offers to NGESO
       
     A party that wishes to participate in the Balancing Mechanism will need to implement this API following the instructions described in the "onboarding process".
     
@@ -27,8 +26,6 @@ tags:
     description: API Health
   - name: EDT
     description: Electronic Data Transfer
-  - name: EDL
-    description: Electronic Dispatch Logging
 paths:
   /health:
     get:

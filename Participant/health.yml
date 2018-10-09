@@ -1,20 +1,19 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: "Health Check"
+  title: "Wider Access Participant Health Check"
   description: >-
-    The health API will be used to
+    The health API will be used to:
     
-    a) check the health of the connection between NG ESO and the BM Participant hosting the API 
+    a) check the health of the connection between NG ESO and the Wider Access Participant hosting the API 
     
-    b) validate that the NGSO credentials are accepted by the BM Participant 
-    
-    
+    b) validate that the NGSO credentials are accepted by the Wider Access Participant 
+
     Please follow the "onboarding process" to get the proper Authorization to consume this API.
   license:
     name: NGESO
     url: https://www.nationalgrideso.com/terms-and-conditions
-host: wa.api.xx.com
+host: api.participant.com
 basePath: /ngeso/v1
 schemes:
 - https
@@ -30,7 +29,7 @@ paths:
     get:
       tags:
         - Health
-      summary: Checks the health of the connectivity and credentials
+      summary: Checks the connectivity health and credentials
       responses:
         200:
           description: Successful Response
@@ -40,10 +39,16 @@ paths:
             application/json:
               - version: "1.0"
                 timestamp: '2018-10-14T12:00:00.123Z'
-        400:
-          description: Feature Not Found
+        404:
+          description: Not Found
           schema:
               $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Resource not found"
+                code: '404'
+                detail: 'Resource not found'
+                datetime: '2018-10-14T12:00:00.123Z'
         401:
           description: Unauthorized.
           schema:
@@ -55,13 +60,19 @@ paths:
                 detail: 'The Token has expired'
                 datetime: '2018-10-14T12:00:00.123Z'
         500:
-          description: Technical Error
+          description: Internal Server Error
           schema:
               $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Error message on the server side"
+                code: '500'
+                detail: 'Detailed error message'
+                datetime: '2018-10-14T12:00:00.123Z'
 
 definitions:
   Health:
-    title: Health
+    title: API Health
     type: object
     required:
       - version
@@ -72,6 +83,7 @@ definitions:
       timestamp:
         type: string
   Error:
+    title: Error payload
     type: object
     required:
       - code
