@@ -10,7 +10,7 @@ info:
     b) validate that the NGSO credentials are accepted by the BM Participant 
     
     
-    Please follow the "onborarding process" to get the proper Authorization to consume this API.
+    Please follow the "onboarding process" to get the proper Authorization to consume this API.
   license:
     name: NGESO
     url: https://www.nationalgrideso.com/terms-and-conditions
