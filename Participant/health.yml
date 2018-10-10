@@ -30,6 +30,19 @@ paths:
       tags:
         - Health
       summary: Checks the connectivity health and credentials
+      produces:
+      - application/json
+      parameters:
+      - name: "OSCGAppKeyHeader"
+        in: "header"
+        required: true
+        type: "string"
+        description: "API Key"
+      - name: "OSCGOAuthBearer"
+        in: "header"
+        required: true
+        type: "string"
+        description: "OAuth2 Token"
       responses:
         200:
           description: Successful Response
@@ -37,7 +50,7 @@ paths:
               $ref: '#/definitions/Health'
           examples:
             application/json:
-              - version: "1.0"
+              - version: '1.0'
                 timestamp: '2018-10-14T12:00:00.123Z'
         404:
           description: Not Found
@@ -89,17 +102,17 @@ definitions:
       - code
       - message
       - detail
-      - datetime
+      - timestamp
     properties:
-      message:
-        type: string
-        example: 'Error message'
       code:
         type: string
         example: 'Error code'
+      message:
+        type: string
+        example: 'Error message'
       detail:
         type: string
         example: 'Error detailed information'
-      datetime:
+      timestamp:
         type: string
         example: '2018-10-14T12:00:00.123Z'
