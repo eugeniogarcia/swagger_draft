@@ -1,0 +1,320 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "NGESO Wider Access Submission"
+  description: "---
+
+  # Overview
+
+
+  The Submission API allows the Market Participants (MP) to submit Physical Notifications, Quiescent Physical Notifications, Bids & Offers, & Maximum Export/Import Limits, before the Balancing Mechanism Gate is closed. It is the principal mechanism by which participants in the existing Pool submit their offer data to NGESO.
+
+
+  ---
+
+  # Notification Time
+
+  The System Time of the Host shall be in GMT and be kept referenced to a recognised global time base. It is this time, which shall determine gate closure for submissions. Each invocation successfully transferred to the Host will be deemed to be a submission. The notification time of this file and hence all data contained within it shall be deemed to be the point in time that the submission was made.
+
+
+  ---
+
+  # Onboarding:
+
+Please follow the onborarding process to get the proper Authorization to consume this API.
+
+
+  ---
+
+  # Conventions:
+
+    **timeFrom**=  CCYY-MM-DD hh:mm
+
+    **timeTo**=  CCYY-MM-DD hh:mm
+
+    **levelFrom**=  MW
+
+    **levelTo**=  MW
+
+    **offerPrice**=  £ / MWh
+
+    **bidPrice**=  £ / MWh
+
+
+
+    **Time Format:**
+
+    **CCYY**= year (numeric)
+
+    **MM**= month (numeric)
+
+    **DD**= day (numeric)
+
+    a single space separator between date and time
+
+    **hh**= hours
+
+    **mm**= minutes
+"
+
+  license:
+    name: "NGESO"
+    url: https://www.nationalgrideso.com/terms-and-conditions
+host: api.wa.nationalgrid.com
+basePath: /ngeso/v1
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /submission:
+    post:
+      summary: Add a new submission
+      consumes:
+        - application/json
+      parameters:
+        - name: "OSCGAppKeyHeader"
+          in: "header"
+          required: true
+          type: "string"
+          description: "API Key"
+        - name: "OSCGOAuthBearer"
+          in: "header"
+          required: true
+          type: "string"
+          description: "OAuth2 Token"
+        - in: "body"
+          name: submission
+          description: Submission
+          required: true
+          schema:
+            $ref: '#/definitions/Submission'
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Response'
+          examples:
+            application/json:
+              - version: '1.0'
+                timestamp: "2018-10-03T12:00:00.123Z"
+                responseCode: 200
+                responseDescription: "OK"
+        401:
+          description: Unauthorized
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Not Authorized"
+                code: '401'
+                detail: 'The Token has expired'
+                datetime: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
+        404:
+          description: Not Found
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Resource not found"
+                code: '404'
+                detail: 'Resource not found'
+                timestamp: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
+        500:
+          description: Internal Server Error
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Error message on the server side"
+                code: '500'
+                detail: 'Detailed error message'
+                timestamp: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
+definitions:
+  Submission:
+    title: "Submission data"
+    type: object
+    required:
+      - sequence
+      - agentName
+      - bmUnitName
+    properties:
+      sequence:
+        type: integer
+        format: int32
+      agentName:
+        title: "Agent Name"
+        example: "TR_AGT"
+        type: string
+      bmUnitName:
+        type: string
+      pn:
+        type: array
+        items:
+          $ref: '#/definitions/PN'
+      qpn:
+        type: array
+        items:
+          $ref: '#/definitions/QPN'
+      bod:
+        type: array
+        items:
+          $ref: '#/definitions/BOD'
+      mel:
+        type: array
+        items:
+          $ref: '#/definitions/MEL'
+      mil:
+        type: array
+        items:
+          $ref: '#/definitions/MIL'
+
+  PN:
+    title: "Physical Notification"
+    type: object
+    properties:
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+      levelFrom:
+        type: number
+      levelTo:
+        type: number
+    required:
+      - timeFrom
+      - timeTo
+      - levelFrom
+      - levelTo
+
+  QPN:
+    title: "Quiescent Physical Notification"
+    type: object
+    properties:
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+      levelFrom:
+        type: number
+      levelTo:
+        type: number
+    required:
+      - timeFrom
+      - timeTo
+      - levelFrom
+      - levelTo
+
+  BOD:
+    title: "Bid-Offer Data"
+    type: object
+    properties:
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+      levelFrom:
+        type: number
+      levelTo:
+        type: number
+      pairNumber:
+        type: number
+      offerPrice:
+        type: number
+      bidPrice:
+        type: number
+    required:
+      - timeFrom
+      - timeTo
+      - levelFrom
+      - levelTo
+      - pairNumber
+      - offerPrice
+      - bidPrice
+
+  MEL:
+    title: "Maximum Export Limit"
+    type: object
+    properties:
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+      maximumExportLevelFrom:
+        type: number
+      maximumExportLevelTo:
+        type: number
+    required:
+      - timeFrom
+      - timeTo
+      - maximumExportLevelFrom
+      - maximumExportLevelTo
+
+  MIL:
+    title: "Maximum Import Limit"
+    type: object
+    properties:
+      timeFrom:
+        type: string
+      timeTo:
+        type: string
+      maximumImportLevelFrom:
+        type: number
+      maximumImportLevelTo:
+        type: number
+    required:
+      - timeFrom
+      - timeTo
+      - maximumImportLevelFrom
+      - maximumImportLevelTo
+
+  Response:
+    title: "Response"
+    type: object
+    properties:
+      version:
+        type: string
+      timestamp:
+        type: string
+      responseCode:
+        type: string
+      responseDescription:
+        type: string
+    required:
+      - version
+      - timestamp
+      - responseCode
+      - responseDescription  
+
+  Error:
+    title: Error payload
+    type: object
+    required:
+      - version
+      - code
+      - message
+      - detail
+      - timestamp
+    properties:
+      version:
+        type: string
+        example: '1.0'
+      code:
+        type: string
+        example: 'Error code'
+      message:
+        type: string
+        example: 'Error message'
+      detail:
+        type: string
+        example: 'Error detailed information'
+      timestamp:
+        type: string
+        example: '2018-10-14T12:00:00.123Z'

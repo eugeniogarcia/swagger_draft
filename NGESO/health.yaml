@@ -2,14 +2,27 @@ swagger: '2.0'
 info:
   version: '1.0'
   title: "NGESO Wider Access Health Check"
-  description: >-
-    The health API will be used to:
+  description: "---
     
-    a) check that the Wider Access API hosted on NG ESO is reachable 
+  # Overview
+  
+  
+  The Health API will publishes the data provided by the instrumentation of the NGESO Wider Access APIs. This information will enable the Wider Access NGESO APIs health monitoring
+  
+  # KPIs Measured
+  
+  The instrumentation implemented on the Wider Access API will check the following dimensions:
     
-    b) & return the status of each individual API
+    a) check that whether the Wider Access APIs hosted on NGESO are reachable 
     
-    This API is meant to be used internally by NG ESO, but not by the Wider Access Participants
+    b) whether each individual API (subscription & submission) is up and running
+    
+    c) the NGESO credentials are valid 
+  
+  # Onboarding
+  
+    This API is meant to be used internally by NGESO, but not by the Wider Access Participants. As a result, the API will not be available in the API Portal for the Participants to subscribe
+  "
   license:
     name: NGESO
     url: https://www.nationalgrideso.com/terms-and-conditions
@@ -30,6 +43,19 @@ paths:
       tags:
         - Health
       summary: Checks the health of each of the Wider Access APIs published by NG ESO
+      produces:
+      - application/json
+      parameters:
+      - name: "OSCGAppKeyHeader"
+        in: "header"
+        required: true
+        type: "string"
+        description: "API Key"
+      - name: "OSCGOAuthBearer"
+        in: "header"
+        required: true
+        type: "string"
+        description: "OAuth2 Token"
       responses:
         200:
           description: Successful Response
@@ -42,12 +68,26 @@ paths:
             - APIs:
               - apiname: 'submission'
                 status: 'Up'
+                version: '1.0'
               - apiname: 'resubmission'
                 status: 'Down'
+                version: '1.0'
               - apiname: 'metering'
                 status: 'Up'
-              version: "1.0"
+                version: '2.0'
+              version: '1.0'
               timestamp: '2018-10-14T12:00:00.123Z'
+        401:
+          description: Unauthorized
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: "Not Authorized"
+                code: '401'
+                detail: 'The Token has expired'
+                datetime: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
         404:
           description: Not Found
           schema:
@@ -58,6 +98,7 @@ paths:
                 code: '404'
                 detail: 'Resource not found'
                 timestamp: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
         500:
           description: Internal Server Error
           schema:
@@ -67,7 +108,8 @@ paths:
               - message: "Error message on the server side"
                 code: '500'
                 detail: 'Detailed error message'
-                timestamp: '2018-10-14T12:00:00.123Z'              
+                timestamp: '2018-10-14T12:00:00.123Z'
+                version: '1.0'
 
 definitions:
   NGESOHealth:
@@ -89,28 +131,37 @@ definitions:
     required:
       - apiname
       - status
+      - version
     properties:
       apiname:
         type: string
-        example: 'submissions'
+        example: 'submission'
       status:
         type: string
         example: 'Up'
+      version:
+        type: string
+        example: '1.0'
+
   Error:
     title: Error payload
     type: object
     required:
+      - version
       - code
       - message
       - detail
-      - datetime
+      - timestamp
     properties:
-      message:
+      version:
         type: string
-        example: 'Error message'
+        example: '1.0'
       code:
         type: string
         example: 'Error code'
+      message:
+        type: string
+        example: 'Error message'
       detail:
         type: string
         example: 'Error detailed information'
