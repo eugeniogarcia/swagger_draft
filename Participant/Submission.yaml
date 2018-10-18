@@ -347,7 +347,7 @@ definitions:
     required:
       - sequence
       - agentName
-      - BMUSubmissionElements
+      - BMUElement
     properties:
       sequence:
         type: integer
@@ -366,7 +366,7 @@ definitions:
     title: 'BMU Submission Element'
     type: object
     required:
-      - bmUnitName
+      - bmUnitElement
     properties:
       bmUnitName:
         type: string
