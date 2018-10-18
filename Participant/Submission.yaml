@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: 'NGESO Wider Access Submission'
+  title: 'Wider Access Participant Submission'
   description: '---
 
   # Overview
@@ -86,7 +86,7 @@ host: api.wa.nationalgrid.com
 basePath: /ngeso/v1
 tags:
   - name: 'submission'
-    description: "EDL Balancing Participants Submissions"
+    description: "Everything about Submissions"
     externalDocs:
       description: "Find out more"
       url: "https://www.nationalgrideso.com/"
@@ -97,11 +97,11 @@ consumes:
 produces:
 - application/json
 paths:
-  /submission:
+  /submissionAcknowledgment:
     post:
       tags:
       - 'submission'
-      summary: Add a new submission [Market Participant -> NGESO]
+      summary: BM Acknowledgment Response for a submission [NGESO -> Market Participant]
       consumes:
         - application/json
       parameters:
@@ -116,11 +116,11 @@ paths:
           type: 'string'
           description: 'OAuth2 Token'
         - in: 'body'
-          name: submission
-          description: Submission Request Data
+          name: SubmissionACK
+          description: Submission ACK
           required: true
           schema:
-            $ref: '#/definitions/Submission'
+            $ref: '#/definitions/SubmissionACK'
       responses:
         200:
           description: 'Successful Response'
@@ -132,7 +132,6 @@ paths:
             application/json:
               - version: '1.0'
                 timestamp: '2018-10-11T12:00:00.123Z'
-                code: '200'
         400:
           description: Bad Request
           schema:
@@ -177,31 +176,127 @@ paths:
                 detail: 'Detailed error message'
                 timestamp: '2018-10-11T12:00:00.123Z'
                 version: '1.0'
+  /submissionResponse:
+    post:
+      tags:
+      - 'submission'
+      summary: BM Operational Response of a submission (acceptance and rejection)  [NGESO -> Market Participant]
+      consumes:
+        - application/json
+      parameters:
+        - name: 'OSCGAppKeyHeader'
+          in: 'header'
+          required: true
+          type: 'string'
+          description: 'API Key'
+        - name: 'OSCGOAuthBearer'
+          in: 'header'
+          required: true
+          type: 'string'
+          description: 'OAuth2 Token'
+        - in: 'body'
+          name: ElementSubmissionResponse
+          description: Element Submission Response
+          required: true
+          schema:
+            $ref: '#/definitions/ElementSubmissionResponse'
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/AcceptanceResponse'
+          examples:
+            application/json:
+              - version: '1.0'
+                timestamp: '2018-10-11T12:00:00.123Z'
+        400:
+          description: Bad Request
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Bad Request'
+                code: '400'
+                detail: 'Wrong Data Format'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+
+        401:
+          description: Unauthorized
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Not Authorized'
+                code: '401'
+                detail: 'The Token has expired'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+        404:
+          description: Not Found
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Resource not found'
+                code: '404'
+                detail: 'Resource not found'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+        500:
+          description: Internal Server Error
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Error message on the server side'
+                code: '500'
+                detail: 'Detailed error message'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
 
 definitions:
-  Submission:
-    title: 'Submission Request data'
+  SubmissionACK:
+    title: 'BM Acknoledgment'
     type: object
     required:
       - sequence
-      - agentName
-      - BMUSubmissionElements
+      - notificationTime
     properties:
       sequence:
-        type: integer
-        format: int32
-        example: 12345
-      agentName:
         type: string
-        title: 'Agent Name'
-        example: 'TR_AGT'
-      BMUSubmissionElements:
+        title: 'Sequence'
+        example: '12345'
+      notificationTime:
+        type: string
+        example: '2018-10-11 01:03'
+
+  ElementSubmissionResponse:
+    title: 'BM Element Submission Response'
+    type: object
+    properties:
+      sequence:
+        type: string
+        example: '12345'
+      timestamp:
+        type: string
+        example: '2018-10-11T01:02:03.456Z'
+      acceptance:
         type: array
         items:
-          $ref: '#/definitions/BMUSubmissionElements'
+          $ref: '#/definitions/AcceptanceResponse'
+      rejection:
+        type: array
+        items:
+          $ref: '#/definitions/RejectionResponse'
+    required:
+      - sequence
+      - timestamp
 
-  BMUSubmissionElements:
-    title: 'BMU Submission Element'
+  AcceptanceResponse:
+    title: 'BM Acceptance Response'
     type: object
     required:
       - bmUnitName
@@ -210,148 +305,24 @@ definitions:
         type: string
         title: 'Unit Name'
         example: 'BM_UNIT_1'
-      pn:
-        type: array
-        items:
-          $ref: '#/definitions/PN'
-      qpn:
-        type: array
-        items:
-          $ref: '#/definitions/QPN'
-      bod:
-        type: array
-        items:
-          $ref: '#/definitions/BOD'
-      mel:
-        type: array
-        items:
-          $ref: '#/definitions/MEL'
-      mil:
-        type: array
-        items:
-          $ref: '#/definitions/MIL'
 
-  PN:
-    title: 'Physical Notification'
+  RejectionResponse:
+    title: 'BM Rejection Response'
     type: object
     properties:
-      timeFrom:
+      code:
         type: string
-        example: '2018-10-14 06:00'
-      timeTo:
+        example: 'V_RURE_2'
+      message:
         type: string
-        example: '2018-10-14 10:00'
-      levelFrom:
-        type: number
-        example: 10
-      levelTo:
-        type: number
-        example: 20
+        example: 'An invalid combination of NULL rates and breakpoints was encountered'
+      record:
+        type: string
+        example: 'RURE, TR_AGT, BMUNIT01, 2001-11-03 05:00, , , 12,'
     required:
-      - timeFrom
-      - timeTo
-      - levelFrom
-      - levelTo
-
-  QPN:
-    title: 'Quiescent Physical Notification'
-    type: object
-    properties:
-      timeFrom:
-        type: string
-        example: '2018-10-14 06:00'
-      timeTo:
-        type: string
-        example: '2018-10-14 10:00'
-      levelFrom:
-        type: number
-        example: 15
-      levelTo:
-        type: number
-        example: 25
-    required:
-      - timeFrom
-      - timeTo
-      - levelFrom
-      - levelTo
-
-  BOD:
-    title: 'Bid-Offer Data'
-    type: object
-    properties:
-      timeFrom:
-        type: string
-        example: '2018-10-14 06:00'
-      timeTo:
-        type: string
-        example: '2018-10-14 10:00'
-      levelFrom:
-        type: number
-        example: 10
-      levelTo:
-        type: number
-        example: 20
-      pairNumber:
-        type: number
-        example: 123456
-      offerPrice:
-        type: number
-        example: 12.31
-      bidPrice:
-        type: number
-        example: 1.77
-    required:
-      - timeFrom
-      - timeTo
-      - levelFrom
-      - levelTo
-      - pairNumber
-      - offerPrice
-      - bidPrice
-
-  MEL:
-    title: 'Maximum Export Limit'
-    type: object
-    properties:
-      timeFrom:
-        type: string
-        example: '2018-10-14 06:00'
-      timeTo:
-        type: string
-        example: '2018-10-14 10:00'
-      maximumExportLevelFrom:
-        type: number
-        example: 1977
-      maximumExportLevelTo:
-        type: number
-        example: 2010
-    required:
-      - timeFrom
-      - timeTo
-      - maximumExportLevelFrom
-      - maximumExportLevelTo
-
-  MIL:
-    title: 'Maximum Import Limit'
-    type: object
-    properties:
-      timeFrom:
-        type: string
-        example: '2018-10-14 06:00'
-      timeTo:
-        type: string
-        example: '2018-10-14 10:00'
-      maximumImportLevelFrom:
-        type: number
-        example: 1977
-      maximumImportLevelTo:
-        type: number
-        example: 2010
-    required:
-      - timeFrom
-      - timeTo
-      - maximumImportLevelFrom
-      - maximumImportLevelTo
+      - code
+      - message
+      - record
 
   Response:
     title: 'Successful Submission Response'
@@ -366,6 +337,7 @@ definitions:
     required:
       - version
       - timestamp
+
 
   Error:
     title: Error payload
@@ -392,5 +364,3 @@ definitions:
       timestamp:
         type: string
         example: '2018-10-11T01:02:03.456Z'
-
-
