@@ -86,7 +86,7 @@ host: api.wa.nationalgrid.com
 basePath: /ngeso/v1
 tags:
   - name: 'submission'
-    description: "Everything about Submissions"
+    description: "EDL Balancing Participants Submissions"
     externalDocs:
       description: "Find out more"
       url: "https://www.nationalgrideso.com/"
@@ -144,168 +144,6 @@ paths:
                 detail: 'Wrong Data Format'
                 timestamp: '2018-10-11T12:00:00.123Z'
                 version: '1.0'
-        401:
-          description: Unauthorized
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Not Authorized'
-                code: '401'
-                detail: 'The Token has expired'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-        404:
-          description: Not Found
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Resource not found'
-                code: '404'
-                detail: 'Resource not found'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-        500:
-          description: Internal Server Error
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Error message on the server side'
-                code: '500'
-                detail: 'Detailed error message'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-  /submissionAcknowledgment:
-    post:
-      tags:
-      - 'submission'
-      summary: BM Acknowledgment Response for a submission [NGESO -> Market Participant]
-      consumes:
-        - application/json
-      parameters:
-        - name: 'OSCGAppKeyHeader'
-          in: 'header'
-          required: true
-          type: 'string'
-          description: 'API Key'
-        - name: 'OSCGOAuthBearer'
-          in: 'header'
-          required: true
-          type: 'string'
-          description: 'OAuth2 Token'
-        - in: 'body'
-          name: SubmissionACK
-          description: Submission ACK
-          required: true
-          schema:
-            $ref: '#/definitions/SubmissionACK'
-      responses:
-        200:
-          description: 'Successful Response'
-          schema:
-            type: object
-            items:
-              $ref: '#/definitions/Response'
-          examples:
-            application/json:
-              - version: '1.0'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                code: '200'
-        400:
-          description: Bad Request
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Bad Request'
-                code: '400'
-                detail: 'Wrong Data Format'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-        401:
-          description: Unauthorized
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Not Authorized'
-                code: '401'
-                detail: 'The Token has expired'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-        404:
-          description: Not Found
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Resource not found'
-                code: '404'
-                detail: 'Resource not found'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-        500:
-          description: Internal Server Error
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Error message on the server side'
-                code: '500'
-                detail: 'Detailed error message'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-  /submissionResponse:
-    post:
-      tags:
-      - 'submission'
-      summary: BM Operational Response of a submission (acceptance and rejection)  [NGESO -> Market Participant]
-      consumes:
-        - application/json
-      parameters:
-        - name: 'OSCGAppKeyHeader'
-          in: 'header'
-          required: true
-          type: 'string'
-          description: 'API Key'
-        - name: 'OSCGOAuthBearer'
-          in: 'header'
-          required: true
-          type: 'string'
-          description: 'OAuth2 Token'
-        - in: 'body'
-          name: ElementSubmissionResponse
-          description: Element Submission Response
-          required: true
-          schema:
-            $ref: '#/definitions/ElementSubmissionResponse'
-      responses:
-        200:
-          description: 'Successful Response'
-          schema:
-            type: object
-            items:
-              $ref: '#/definitions/AcceptanceResponse'
-          examples:
-            application/json:
-              - version: '1.0'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                code: '200'
-                message: 'OK'
-        400:
-          description: Bad Request
-          schema:
-              $ref: '#/definitions/Error'
-          examples:
-            application/json:
-              - message: 'Bad Request'
-                code: '400'
-                detail: 'Wrong Data Format'
-                timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
-
         401:
           description: Unauthorized
           schema:
@@ -525,13 +363,9 @@ definitions:
       timestamp:
         type: string
         example: '2018-10-11T01:02:03.456Z'
-      code:
-        type: string
-        example: '200'
     required:
       - version
       - timestamp
-      - code
 
   Error:
     title: Error payload
@@ -559,68 +393,4 @@ definitions:
         type: string
         example: '2018-10-11T01:02:03.456Z'
 
-  SubmissionACK:
-    title: 'BM Acknoledgment'
-    type: object
-    required:
-      - sequence
-      - notificationTime
-    properties:
-      sequence:
-        type: string
-        title: 'Sequence'
-        example: '12345'
-      notificationTime:
-        type: string
-        example: '2018-10-11 01:03'
 
-  ElementSubmissionResponse:
-    title: 'BM Element Submission Response'
-    type: object
-    properties:
-      sequence:
-        type: string
-        example: '12345'
-      timestamp:
-        type: string
-        example: '2018-10-11T01:02:03.456Z'
-      acceptance:
-        type: array
-        items:
-          $ref: '#/definitions/AcceptanceResponse'
-      rejection:
-        type: array
-        items:
-          $ref: '#/definitions/RejectionResponse'
-    required:
-      - sequence
-      - timestamp
-
-  AcceptanceResponse:
-    title: 'BM Acceptance Response'
-    type: object
-    required:
-      - bmUnitName
-    properties:
-      bmUnitName:
-        type: string
-        title: 'Unit Name'
-        example: 'BM_UNIT_1'
-
-  RejectionResponse:
-    title: 'BM Rejection Response'
-    type: object
-    properties:
-      code:
-        type: string
-        example: 'V_RURE_2'
-      message:
-        type: string
-        example: 'An invalid combination of NULL rates and breakpoints was encountered'
-      record:
-        type: string
-        example: 'RURE, TR_AGT, BMUNIT01, 2001-11-03 05:00, , , 12,'
-    required:
-      - code
-      - message
-      - record
