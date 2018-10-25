@@ -44,11 +44,6 @@ paths:
       produces:
       - application/json
       parameters:
-      - name: "OSCGAppKeyHeader"
-        in: "header"
-        required: true
-        type: "string"
-        description: "API Key"
       - name: "OSCGOAuthBearer"
         in: "header"
         required: true
