@@ -1,0 +1,227 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "Participant_redeclaration"
+  description: '---
+  
+
+
+  # Overview:
+
+
+
+
+  ---
+
+
+  # Redeclaration Acceptance:
+
+Acceptance are produced once a submission request has been validated in its entirety. The acceptance response will contain BMU submitted if data has passed formatting, consistency and validation tests. The output will be the BMU accepted.
+
+
+  ---
+
+  # Redeclaration Rejection:
+
+Redeclaration rejection are also produced once a submission file has been validated in its entirety. Each record contained within a file is checked for formatting, validity and consistency. Should formatting prove incorrect the request will not proceed to validation and will be rejected at that stage. Thus a record that has invalid data and is also incorrectly formatted for the type of data will only have a message stating that it was rejected owing to a formatting error. The validity of the record will not be considered. Once a record has completed and passed formatting checks, it will be checked against each applicable validation and consistency rule. Any and all of these failures will be reported individually for each submitted record. Hence a single row that does not comply with multiple validation or consistency rules, will give rise to multiple error messages within a reject request.
+
+
+  ---
+
+  # Onboarding:
+
+Please follow the onborarding process to get the proper Authorization to consume this API.
+
+
+  ---
+
+  # Conventions:
+
+
+'
+
+  license:
+    name: 'NGESO'
+    url: https://www.nationalgrideso.com/terms-and-conditions
+host: api.wa.nationalgrid.com
+basePath: /ngeso/v1
+tags:
+  - name: 'Redeclaration Acceptance'
+    description: "Everything about Redeclaration Acceptance"
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.nationalgrideso.com/"
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /redeclarationAcc:
+    post:
+      tags:
+      - 'Redeclaration Acceptance'
+      summary: BM Operational Acceptance of a redeclaration [NGESO -> Market Participant]
+      consumes:
+        - application/json
+      parameters:
+        - name: 'OSCGOAuthBearer'
+          in: 'header'
+          required: true
+          type: 'string'
+          description: 'OAuth2 Token'
+        - in: 'body'
+          name: ElementRedeclarationAcceptance
+          description: Element Redeclaration Acceptance
+          required: true
+          schema:
+            $ref: '#/definitions/ElementRedeclarationSyncResp'
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+              $ref: '#/definitions/Response'
+
+        400:
+          description: Bad Request
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Bad Request'
+                code: '400'
+                detail: 'Wrong Data Format'
+                timestamp: '18-OCT-2018 04:02'
+                version: '1.0'
+
+        401:
+          description: Unauthorized
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Not Authorized'
+                code: '401'
+                detail: 'The Token has expired'
+                timestamp: '18-OCT-2018 04:02'
+                version: '1.0'
+        404:
+          description: Not Found
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Resource not found'
+                code: '404'
+                detail: 'Resource not found'
+                timestamp: '18-OCT-2018 04:02'
+                version: '1.0'
+        500:
+          description: Internal Server Error
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Error message on the server side'
+                code: '500'
+                detail: 'Detailed error message'
+                timestamp: '18-OCT-2018 04:02'
+                version: '1.0'
+                
+definitions:
+  Response:
+    title: 'Successful Redeclaration Response'
+    type: object
+    properties:
+      version:
+        type: string
+        example: '1.0'
+      timestamp:
+        type: string
+        pattern: date-time
+        example: '2018-10-11T01:02:03.456Z'
+    required:
+      - version
+      - timestamp
+      
+  Error:
+    title: 'Error payload'
+    type: object
+    properties:
+      version:
+        type: string
+        example: '1.0'
+      code:
+        type: string
+        example: '000'
+      message:
+        type: string
+        example: 'Error message'
+      detail:
+        type: string
+        example: 'Error detailed information'
+      timestamp:
+        type: string
+        pattern: date-time
+        example: '2018-10-11T01:02:03.456Z'
+    required:
+      - version
+      - code
+      - message
+      - detail
+      - timestamp
+      
+
+  ElementRedeclarationSyncResp:
+    title: 'BM Element Redeclaration Acceptance'
+    type: object
+    properties:
+      refNumber:
+        type: string
+        pattern: '^\d{10}$'
+        example: '0000012770'
+        
+      timestamp:
+        type: string
+        pattern: date-time
+        example: '2018-10-11T01:02:03.456Z'
+      bmUnitName:
+        type: string
+        title: 'BM Unit Name'
+        example: 'AG-FFLX01'
+      status:
+        type: string
+        enum:
+          - 'KO'
+          - 'OK'
+        example: 'KO'
+
+      rejection:
+        type: array
+        items:
+          $ref: '#/definitions/RejectionResponse'
+    required:
+      - refNumber
+      - timestamp
+      - bmUnitName
+      - status
+
+    
+  RejectionResponse:
+    title: 'BM Rejection Response'
+    type: object
+    properties:
+      code:
+        type: string
+        example: 'R011'
+      message:
+        type: string
+        example: 'FROM time must be equal to or after SUBMISSION time'
+      record:
+        type: string
+        example: 'NGC^RU E^AG-FFLX01 0000012770 18-OCT-2018 04:02'
+    required:
+      - code
+      - message
+      - record 

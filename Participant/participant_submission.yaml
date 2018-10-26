@@ -68,12 +68,12 @@ info:
 
 
     ---
-    
+
     # Submission Errors
-    
-    You may found the list of errors that may be included on a Rejection here. 
-    
-    
+
+    You may found the list of errors that may be included on a Rejection here.
+
+
     ---
 
     # Onboarding:
@@ -112,7 +112,7 @@ info:
 
     **hh**= hours
 
-    **mm**= minutes 
+    **mm**= minutes
   license:
     name: NGESO
     url: 'https://www.nationalgrideso.com/terms-and-conditions'
@@ -212,7 +212,7 @@ paths:
       tags:
         - submission
       summary: >-
-        BM Operational Response of a submission (acceptance and rejection) 
+        BM Operational Response of a submission (acceptance and rejection)
         [NGESO -> Market Participant]
       consumes:
         - application/json
@@ -292,11 +292,14 @@ definitions:
       - notificationTime
     properties:
       sequence:
-        type: string
         title: Sequence
-        example: '12345'
+        type: string
+        minLength: 5
+        maxLength: 5
+        example: '01234'
       notificationTime:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-11 01:03'
   ElementSubmissionResponse:
     title: BM Element Submission Response
@@ -335,10 +338,10 @@ definitions:
     properties:
       code:
         type: string
-        example: V_RURE_2
+        example: 'V_RURE_2'
       message:
         type: string
-        example: An invalid combination of NULL rates and breakpoints was encountered
+        example: 'An invalid combination of NULL rates and breakpoints was encountered'
       record:
         type: string
         example: 'RURE, TR_AGT, BMUNIT01, 2001-11-03 05:00, , , 12,'
@@ -347,7 +350,7 @@ definitions:
       - message
       - record
   Response:
-    title: Successful Submission Response
+    title: 'Successful Submission Response'
     type: object
     properties:
       version:
@@ -355,6 +358,7 @@ definitions:
         example: '1.0'
       timestamp:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
         example: '2018-10-11T01:02:03.456Z'
     required:
       - version
@@ -377,10 +381,11 @@ definitions:
         example: '000'
       message:
         type: string
-        example: Error message
+        example: 'Error message'
       detail:
         type: string
-        example: Error detailed information
+        example: 'Error detailed information'
       timestamp:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
         example: '2018-10-11T01:02:03.456Z'
