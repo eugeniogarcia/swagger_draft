@@ -1,0 +1,570 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "NGESO_redeclaration"
+  description: '---
+  
+  # Overview
+
+
+  The EDL Submission API allows the Market Participants (MP) to submit Maximum Export/Import Limit (MIL/MEL) ,Run Up/Down Rate Export (RURE/RDRE) ,Notice to Deviate From Zero (NDZ) ,Stable Export/Import Limit(SEL/SIL) , Minimum Zero Time (MZT), Minimum Non Zero Time (MNZT), Run Up/Down Rate Import (RURI/RDRI), Notice to Deliver Offers/Bids(NTO/NTB)  , Maximum Delivery Volume (MDVP) & Successful submission Response, before the Balancing Mechanism Gate is closed. It is the principal mechanism by which participants in the existing Pool submit their offer data to NGESO.
+
+
+  ---
+
+  # Notification Time
+
+  The System Time of the Host shall be in GMT and be kept referenced to a recognised global time base. It is this time, which shall determine gate closure for resubmissions. Each invocation successfully transferred to the Host will be deemed to be a resubmission. The notification time of this file and hence all data contained within it shall be deemed to be the point in time that the resubmission was made.
+
+
+  ---
+
+
+  # Onboarding:
+
+Please follow the onborarding process to get the proper Authorization to consume this API.
+
+
+  ---
+
+  # Conventions:
+  
+  ### MEL, MIL
+  
+    **timeFrom**: DD-MMM-YYYY hh:mm 
+
+    **timeTo**:  DD-MMM-YYYY hh:mm
+  
+    **levelFrom**: +-nnnnnnnn
+
+    **levelTo**: +-nnnnnnnn
+  
+  
+  ### RURE, RURI, RDRE, RDRI
+      
+    **rate1**: nnnnnn
+    
+    **elbow2**: +-nnnn
+    
+    **rate2**: nnnnnn
+    
+    **elbow3**: +-nnnn
+    
+    **rate3**: nnnnnn
+    
+    
+  ### NDZ, NTO, NTB, MZT, MNZT
+  
+    **timeValue**: nnn
+  
+  ### SEL, SIL
+  
+    **MWlevel**: nnnnnnnnn
+  
+  ### MDVP
+    
+    **mdv**: nnnnnnnnnnn
+    
+    **mdp**: nnn
+
+
+
+    ## Format
+    
+    **CCYY**= year (numeric)
+
+    **MMM**= month (alphabetic)
+
+    **DD**= day (numeric)
+
+    **hh**= hours
+
+    **mm**= minutes
+    
+    **nnn**= number
+    
+
+    
+
+'
+
+
+  license:
+    name: 'NGESO'
+    url: https://www.nationalgrideso.com/terms-and-conditions
+host: api.wa.nationalgrid.com
+basePath: /ngeso/v1
+tags:
+  - name: 'Redeclaration'
+    description: "Everything about Redeclaration"
+    externalDocs:
+      description: "Find out more"
+      url: "https://www.nationalgrideso.com/"
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /redeclaration:
+    post:
+      tags:
+      - 'Redeclaration'
+      summary: Add a new redeclaration [Market Participant -> NGESO]
+      consumes:
+        - application/json
+      parameters:
+        - name: 'OSCGAppKeyHeader'
+          in: 'header'
+          required: true
+          type: 'string'
+          description: 'API Key'
+        - name: 'OSCGOAuthBearer'
+          in: 'header'
+          required: true
+          type: 'string'
+          description: 'OAuth2 Token'
+        - in: 'body'
+          name: Redeclaration
+          description: Redeclaration Request Data
+          required: true
+          schema:
+            $ref: '#/definitions/Redeclaration'
+
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+              $ref: '#/definitions/ElementRedeclarationSyncResp'
+          examples:
+            application/json:
+              - refNumber: '0000001134'
+                timestamp: '2018-10-11T01:02:03.456Z'
+                bmUnitName: 'BM Unit Name'
+                status: 'KO'
+                code: 'R999'
+                message: 'Contact NGC'
+                record: 'NGC^RN E^AG-FFLX01 0000011954 18-Oct-2018 00:00 MEL    18-Oct-2018 00:00 +00000000 18-Oct-2018 01:30 +00000000'
+
+        400:
+          description: Bad Request
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Bad Request'
+                code: '400'
+                detail: 'Wrong Data Format'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+        401:
+          description: Unauthorized
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Not Authorized'
+                code: '401'
+                detail: 'The Token has expired'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+        404:
+          description: Not Found
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Resource not found'
+                code: '404'
+                detail: 'Resource not found'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+        500:
+          description: Internal Server Error
+          schema:
+              $ref: '#/definitions/Error'
+          examples:
+            application/json:
+              - message: 'Error message on the server side'
+                code: '500'
+                detail: 'Detailed error message'
+                timestamp: '2018-10-11T12:00:00.123Z'
+                version: '1.0'
+
+definitions:
+  Redeclaration:
+    title: 'Redeclaration Request data'
+    type: object
+    properties:
+      BMUnitName:
+        type: string
+        title: 'BM Unit Name'
+        example: 'CRUA-1'
+      RefNumber:
+        type: string
+        title: 'Redeclaration Reference Number'
+        example: '0010584466'
+      
+      mel:
+        type: array
+        items:
+          $ref: '#/definitions/MEL'
+
+      mil:
+        type: array
+        items:
+          $ref: '#/definitions/MIL'
+
+      rure:
+        type: array
+        items:
+          $ref: '#/definitions/RURE'
+
+      rdre:
+        type: array
+        items:
+          $ref: '#/definitions/RDRE'
+
+      ndz:
+        type: array
+        items:
+          $ref: '#/definitions/NDZ'
+
+      sel:
+        type: array
+        items:
+          $ref: '#/definitions/SEL'
+
+      mzt:
+        type: array
+        items:
+          $ref: '#/definitions/MZT'
+
+      mnzt:
+        type: array
+        items:
+          $ref: '#/definitions/MNZT'
+
+      ruri:
+        type: array
+        items:
+          $ref: '#/definitions/RURI'
+
+      rdri:
+        type: array
+        items:
+          $ref: '#/definitions/RDRI'  
+
+      nto:
+        type: array
+        items:
+          $ref: '#/definitions/NTO' 
+
+      ntb:
+        type: array
+        items:
+          $ref: '#/definitions/NTB'  
+
+      sil:
+        type: array
+        items:
+          $ref: '#/definitions/SIL'    
+
+      mdvp:
+        type: array
+        items:
+          $ref: '#/definitions/MDVP' 
+          
+    required:
+      - BMUnitName
+      - RefNumber
+   
+  MIL:
+    title: 'Maximum Import Limit'
+    type: object
+    properties:
+      timeFrom:
+        type: string
+        example: '18-Oct-2018 07:00'
+      timeTo:
+        type: string
+        example: '18-Oct-2018 08:30'
+      maximumImportLevelFrom:
+        type: string
+        example: '+00000000'
+      maximumImportLevelTo:
+        type: string
+        example: '+00000000'
+    required:
+      - timeFrom
+      - timeTo
+      - maximumImportLevelFrom
+      - maximumImportLevelTo
+
+  MEL:
+    title: 'Maximum Export Limit'
+    type: object
+    properties:
+      timeFrom:
+        type: string
+        example: '18-OCT-2018 06:58'
+      timeTo:
+        type: string
+        example: '19-OCT-2018 08:00'
+      maximumExportLevelFrom:
+        type: string
+        example: '+00000125'
+      maximumExportLevelTo:
+        type: string
+        example: '+00000125'
+    required:
+      - timeFrom
+      - timeTo
+      - maximumExportLevelFrom
+      - maximumExportLevelTo
+
+  RURE:
+    title: 'Run Up Rate Export'
+    type: object
+    properties:
+      rate1:
+        type: string
+        example: '0015.0'
+      elBow2:
+        type: string
+        example: '+0140'
+      rate2:
+        type: string
+        example: '0000.2'
+      elBow3:
+        type: string
+        example: '+0145'
+      rate3:
+        type: string
+        example: '0013.8'
+    required:
+      - rate1
+
+
+  RDRE:
+    title: 'Run Down Rate Export'
+    type: object
+    properties:
+      rate1:
+        type: string
+        example: '0010.0'
+      elBow2:
+        type: string
+        example: '+0300'
+      rate2:
+        type: string
+        example: '0010.0'
+      elBow3:
+        type: string
+        example: '+0200'
+      rate3:
+        type: string
+        example: '0099.0'
+    required:
+      - rate1
+
+  NDZ:
+    title: 'Notice to Deviate From Zero'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       example: '030'
+    required:
+      - timeValue
+
+  SEL:
+    title: 'Stable Export Limit'
+    type: object
+    properties:
+      MWlevel:
+        type: string
+        example: '+00000050'
+    required:
+     - MWlevel
+
+  MZT:
+    title: 'Minimum Zero Time'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       example: '060'
+    required:
+      - timeValue
+
+  MNZT:
+    title: 'Minimum Non Zero Time'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       example: '248'
+    required:
+      - timeValue
+      
+  RURI:
+    title: 'Run Up Rate Import'
+    type: object
+    properties:
+      rate1:
+        type: string
+        example: '0015.0'
+      elBow2:
+        type: string
+        example: '+0045'
+      rate2:
+        type: string
+        example: '0000.4'
+      elBow3:
+        type: string
+        example: '+0069'
+      rate3:
+        type: string
+        example: '0003.2'
+    required:
+      - rate1
+
+  RDRI:
+    title: 'Run Down Rate Import'
+    type: object
+    properties:
+      rate1:
+        type: string
+        example: '0005.6'
+      elBow2:
+        type: string
+        example: '*****'
+      rate2:
+        type: string
+        example: '******'
+      elBow3:
+        type: string
+        example: '*****'
+      rate3:
+        type: string
+        example: '******'
+    required:
+      - rate1
+
+  NTO:
+    title: 'Notice to Deliver Offers'
+    type: object
+    properties:
+      timeValue:
+        type: string
+        example: '002'
+    required:
+      - timeValue
+
+  NTB:
+    title: 'Notice to Deliver Bids'
+    type: object
+    properties:
+      timeValue:
+        type: string
+        example: '002'
+    required:
+      - timeValue
+
+  SIL:
+    title: 'Stable Export Limit'
+    type: object
+    properties:
+      MWlevel:
+        type: string
+        example: '+00000000'
+    required:
+     - MWlevel
+
+  MDVP:
+    title: 'Maximum Delivery Volume'
+    type: object
+    properties: 
+      MDV:
+        type: string
+        title: 'Max Delivery Volume (MW hours)'
+        example: '8789809811'
+      MDP:
+        type: string
+        title: 'Max. Delivery Period (minutes)'
+        example: '878'        
+    required:
+     - MDV
+     - MDP  
+   
+      
+  Error:
+    title: 'Error payload'
+    type: object
+    properties:
+      version:
+        type: string
+        example: '1.0'
+      code:
+        type: string
+        example: '000'
+      message:
+        type: string
+        example: 'Error message'
+      detail:
+        type: string
+        example: 'Error detailed information'
+      timestamp:
+        type: string
+        example: '2018-10-11T01:02:03.456Z'
+    required:
+      - version
+      - code
+      - message
+      - detail
+      - timestamp
+      
+  ElementRedeclarationSyncResp:
+    title: 'BM Element Redeclaration Acceptance'
+    type: object
+    properties:
+      refNumber:
+        type: string
+        example: '0000001134'
+      timestamp:
+        type: string
+        example: '2018-10-11T01:02:03.456Z'
+      bmUnitName:
+        type: string
+        title: 'BM Unit Name'
+        example: 'CRUA-1'
+      status:
+        type: string
+        example: 'OK'
+
+      rejection:
+        type: array
+        items:
+          $ref: '#/definitions/RejectionResponse'
+    required:
+      - refNumber
+      - timestamp
+      - bmUnitName
+      - status
+      
+  RejectionResponse:
+    title: 'BM Rejection Response'
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      record:
+        type: string
+    required:
+      - code
+      - message
+      - record 

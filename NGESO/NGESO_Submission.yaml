@@ -105,7 +105,7 @@ info:
 
     **hh**= hours
 
-    **mm**= minutes 
+    **mm**= minutes
   license:
     name: NGESO
     url: 'https://www.nationalgrideso.com/terms-and-conditions'
@@ -213,11 +213,14 @@ definitions:
       - BMUSubmissionElements
     properties:
       sequence:
-        type: integer
-        format: int32
-        example: 12345
+        type: string
+        minLength: 5
+        maxLength: 5
+        example: '01234'
       agentName:
         type: string
+        minLength: 9
+        maxLength: 9
         title: Agent Name
         example: TR_AGT
       BMUSubmissionElements:
@@ -260,16 +263,22 @@ definitions:
     properties:
       timeFrom:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 06:00'
       timeTo:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 10:00'
       levelFrom:
-        type: number
-        example: 10
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '10'
       levelTo:
-        type: number
-        example: 20
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '20'
     required:
       - timeFrom
       - timeTo
@@ -281,16 +290,22 @@ definitions:
     properties:
       timeFrom:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 06:00'
       timeTo:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 10:00'
       levelFrom:
-        type: number
-        example: 15
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '15'
       levelTo:
-        type: number
-        example: 25
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '25'
     required:
       - timeFrom
       - timeTo
@@ -302,25 +317,37 @@ definitions:
     properties:
       timeFrom:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 06:00'
       timeTo:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 10:00'
       levelFrom:
-        type: number
-        example: 10
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '10'
       levelTo:
-        type: number
-        example: 20
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '20'
       pairNumber:
-        type: number
-        example: 123456
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '123456'
       offerPrice:
-        type: number
-        example: 12.31
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '12.31'
       bidPrice:
-        type: number
-        example: 1.77
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '1.77'
     required:
       - timeFrom
       - timeTo
@@ -335,16 +362,22 @@ definitions:
     properties:
       timeFrom:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 06:00'
       timeTo:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 10:00'
       maximumExportLevelFrom:
-        type: number
-        example: 1977
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '1977'
       maximumExportLevelTo:
-        type: number
-        example: 2010
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '2010'
     required:
       - timeFrom
       - timeTo
@@ -356,16 +389,22 @@ definitions:
     properties:
       timeFrom:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 06:00'
       timeTo:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-14 10:00'
       maximumImportLevelFrom:
-        type: number
-        example: 1977
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '1977'
       maximumImportLevelTo:
-        type: number
-        example: 2010
+        type: string
+        minLength: 0
+        maxLength: 10
+        example: '2010'
     required:
       - timeFrom
       - timeTo
@@ -380,6 +419,7 @@ definitions:
         example: '1.0'
       timestamp:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
         example: '2018-10-11T01:02:03.456Z'
     required:
       - version
@@ -402,10 +442,11 @@ definitions:
         example: '000'
       message:
         type: string
-        example: Error message
+        example: 'Error message'
       detail:
         type: string
-        example: Error detailed information
+        example: 'Error detailed information'
       timestamp:
         type: string
+        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
         example: '2018-10-11T01:02:03.456Z'
