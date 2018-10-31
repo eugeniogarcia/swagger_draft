@@ -84,35 +84,35 @@ info:
 
     ---
 
-    # Conventions:
+    # Conventions:  
 
-    **timeFrom**=  CCYY-MM-DD hh:mm
+    **timeFrom**=  CCYY-MM-DD hh:mm  
 
-    **timeTo**=  CCYY-MM-DD hh:mm
+    **timeTo**=  CCYY-MM-DD hh:mm  
 
-    **levelFrom**=  MW
+    **levelFrom**=  MW  
 
-    **levelTo**=  MW
+    **levelTo**=  MW  
 
-    **offerPrice**=  £ / MWh
+    **offerPrice**=  £ / MWh  
 
-    **bidPrice**=  £ / MWh
+    **bidPrice**=  £ / MWh  
 
 
 
-    **Time Format:**
+    **Time Format:**  
 
-    **CCYY**= year (numeric)
+    **CCYY**= year (numeric)  
 
-    **MM**= month (numeric)
+    **MM**= month (numeric)  
 
-    **DD**= day (numeric)
+    **DD**= day (numeric)  
 
-    a single space separator between date and time
+    a single space separator between date and time  
 
-    **hh**= hours
+    **hh**= hours  
 
-    **mm**= minutes
+    **mm**= minutes  
   license:
     name: NGESO
     url: 'https://www.nationalgrideso.com/terms-and-conditions'
@@ -146,6 +146,11 @@ paths:
           required: true
           type: string
           description: OAuth2 Token
+        - name: replyTo
+          in: header
+          required: true
+          type: string
+          description: URL where to receive submissions
         - in: body
           name: SubmissionACK
           description: Submission ACK
@@ -161,7 +166,8 @@ paths:
               $ref: '#/definitions/Response'
           examples:
             application/json:
-              - version: '1.0'
+              - message: Successful Request
+                version: '1.0'
                 timestamp: '2018-10-11T12:00:00.123Z'
         '400':
           description: Bad Request
@@ -170,10 +176,10 @@ paths:
           examples:
             application/json:
               - message: Bad Request
+                version: '1.0'
                 code: '400'
                 detail: Wrong Data Format
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '401':
           description: Unauthorized
           schema:
@@ -181,10 +187,10 @@ paths:
           examples:
             application/json:
               - message: Not Authorized
+                version: '1.0'
                 code: '401'
                 detail: The Token has expired
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '404':
           description: Not Found
           schema:
@@ -192,10 +198,10 @@ paths:
           examples:
             application/json:
               - message: Resource not found
+                version: '1.0'
                 code: '404'
                 detail: Resource not found
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '500':
           description: Internal Server Error
           schema:
@@ -203,10 +209,11 @@ paths:
           examples:
             application/json:
               - message: Error message on the server side
+                version: '1.0'
                 code: '500'
                 detail: Detailed error message
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
+
   /submissionResp:
     post:
       tags:
@@ -222,6 +229,11 @@ paths:
           required: true
           type: string
           description: OAuth2 Token
+        - name: replyTo
+          in: header
+          required: true
+          type: string
+          description: URL where to receive submissions
         - in: body
           name: ElementSubmissionResponse
           description: Element Submission Response
@@ -237,7 +249,8 @@ paths:
               $ref: '#/definitions/AcceptanceResponse'
           examples:
             application/json:
-              - version: '1.0'
+              - message: Successful Request
+                version: '1.0'
                 timestamp: '2018-10-11T12:00:00.123Z'
         '400':
           description: Bad Request
@@ -246,10 +259,10 @@ paths:
           examples:
             application/json:
               - message: Bad Request
+                version: '1.0'
                 code: '400'
                 detail: Wrong Data Format
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '401':
           description: Unauthorized
           schema:
@@ -257,10 +270,10 @@ paths:
           examples:
             application/json:
               - message: Not Authorized
+                version: '1.0'
                 code: '401'
                 detail: The Token has expired
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '404':
           description: Not Found
           schema:
@@ -268,10 +281,10 @@ paths:
           examples:
             application/json:
               - message: Resource not found
+                version: '1.0'
                 code: '404'
                 detail: Resource not found
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '500':
           description: Internal Server Error
           schema:
@@ -279,16 +292,17 @@ paths:
           examples:
             application/json:
               - message: Error message on the server side
+                version: '1.0'
                 code: '500'
                 detail: Detailed error message
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
 definitions:
   SubmissionACK:
     title: BM Acknoledgment
     type: object
     required:
       - sequence
+      - uniqueTraceId
       - notificationTime
     properties:
       sequence:
@@ -296,11 +310,16 @@ definitions:
         type: string
         minLength: 5
         maxLength: 5
+        pattern: '^\d{5}$'
         example: '01234'
+      uniqueTraceId:
+        type: string
+        example: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
       notificationTime:
         type: string
         pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$'
         example: '2018-10-11 01:03'
+
   ElementSubmissionResponse:
     title: BM Element Submission Response
     type: object
@@ -308,6 +327,9 @@ definitions:
       sequence:
         type: string
         example: '12345'
+      uniqueTraceId:
+        type: string
+        example: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
       timestamp:
         type: string
         example: '2018-10-11T01:02:03.456Z'
@@ -321,7 +343,9 @@ definitions:
           $ref: '#/definitions/RejectionResponse'
     required:
       - sequence
+      - uniqueTraceId
       - timestamp
+
   AcceptanceResponse:
     title: BM Acceptance Response
     type: object
@@ -332,6 +356,7 @@ definitions:
         type: string
         title: Unit Name
         example: BM_UNIT_1
+
   RejectionResponse:
     title: BM Rejection Response
     type: object
@@ -349,6 +374,7 @@ definitions:
       - code
       - message
       - record
+
   Response:
     title: 'Successful Submission Response'
     type: object
@@ -358,11 +384,12 @@ definitions:
         example: '1.0'
       timestamp:
         type: string
-        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
+        format: date-time
         example: '2018-10-11T01:02:03.456Z'
     required:
       - version
       - timestamp
+
   Error:
     title: Error payload
     type: object
@@ -378,6 +405,9 @@ definitions:
         example: '1.0'
       code:
         type: string
+        minLength: 3
+        maxLength: 4
+        pattern: '^\d{4}$'
         example: '000'
       message:
         type: string
@@ -387,5 +417,5 @@ definitions:
         example: 'Error detailed information'
       timestamp:
         type: string
-        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
+        format: date-time
         example: '2018-10-11T01:02:03.456Z'

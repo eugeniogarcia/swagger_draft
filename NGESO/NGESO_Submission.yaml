@@ -77,35 +77,35 @@ info:
 
     ---
 
-    # Conventions:
+    # Conventions:  
 
-    **timeFrom**=  CCYY-MM-DD hh:mm
+    **timeFrom**=  CCYY-MM-DD hh:mm  
 
-    **timeTo**=  CCYY-MM-DD hh:mm
+    **timeTo**=  CCYY-MM-DD hh:mm  
 
-    **levelFrom**=  MW
+    **levelFrom**=  MW  
 
-    **levelTo**=  MW
+    **levelTo**=  MW  
 
-    **offerPrice**=  £ / MWh
+    **offerPrice**=  £ / MWh  
 
-    **bidPrice**=  £ / MWh
+    **bidPrice**=  £ / MWh  
 
 
 
-    **Time Format:**
+    **Time Format:**  
 
-    **CCYY**= year (numeric)
+    **CCYY**= year (numeric)  
 
-    **MM**= month (numeric)
+    **MM**= month (numeric)  
 
-    **DD**= day (numeric)
+    **DD**= day (numeric)  
 
-    a single space separator between date and time
+    a single space separator between date and time  
 
-    **hh**= hours
+    **hh**= hours  
 
-    **mm**= minutes
+    **mm**= minutes  
   license:
     name: NGESO
     url: 'https://www.nationalgrideso.com/terms-and-conditions'
@@ -113,7 +113,7 @@ host: api.wa.nationalgrid.com
 basePath: /ngeso/v1
 tags:
   - name: submission
-    description: EDL Balancing Participants Submissions
+    description: EDT Balancing Participants Submissions
     externalDocs:
       description: Find out more
       url: 'https://www.nationalgrideso.com/'
@@ -142,6 +142,11 @@ paths:
           required: true
           type: string
           description: OAuth2 Token
+        - name: replyTo
+          in: header
+          required: true
+          type: string
+          description: URL where to receive responses back
         - in: body
           name: submission
           description: Submission Request Data
@@ -157,7 +162,10 @@ paths:
               $ref: '#/definitions/Response'
           examples:
             application/json:
-              - version: '1.0'
+              - message: Successful Request
+                version: '1.0'
+                sequence: '1977'
+                uniqueTraceId: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
                 timestamp: '2018-10-11T12:00:00.123Z'
         '400':
           description: Bad Request
@@ -166,10 +174,11 @@ paths:
           examples:
             application/json:
               - message: Bad Request
+                version: '1.0'
                 code: '400'
                 detail: Wrong Data Format
+                uniqueTraceId: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '401':
           description: Unauthorized
           schema:
@@ -177,10 +186,11 @@ paths:
           examples:
             application/json:
               - message: Not Authorized
+                version: '1.0'
                 code: '401'
                 detail: The Token has expired
+                uniqueTraceId: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '404':
           description: Not Found
           schema:
@@ -188,10 +198,11 @@ paths:
           examples:
             application/json:
               - message: Resource not found
+                version: '1.0'
                 code: '404'
                 detail: Resource not found
+                uniqueTraceId: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
                 timestamp: '2018-10-11T12:00:00.123Z'
-                version: '1.0'
         '500':
           description: Internal Server Error
           schema:
@@ -199,34 +210,24 @@ paths:
           examples:
             application/json:
               - message: Error message on the server side
-                code: '500'
-                detail: Detailed error message
-                timestamp: '2018-10-11T12:00:00.123Z'
                 version: '1.0'
+                code: '500'
+                detail: Internal service error
+                uniqueTraceId: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
+                timestamp: '2018-10-11T12:00:00.123Z'
+
 definitions:
   Submission:
     title: Submission Request data
     type: object
     required:
-      - sequence
-      - agentName
       - BMUSubmissionElements
     properties:
-      sequence:
-        type: string
-        minLength: 5
-        maxLength: 5
-        example: '01234'
-      agentName:
-        type: string
-        minLength: 9
-        maxLength: 9
-        title: Agent Name
-        example: TR_AGT
       BMUSubmissionElements:
         type: array
         items:
           $ref: '#/definitions/BMUSubmissionElements'
+
   BMUSubmissionElements:
     title: BMU Submission Element
     type: object
@@ -257,6 +258,55 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/MIL'
+      rure:
+        type: array
+        items:
+          $ref: '#/definitions/RURE'
+      rdre:
+        type: array
+        items:
+          $ref: '#/definitions/RDRE'
+      ndz:
+        type: array
+        items:
+          $ref: '#/definitions/NDZ'
+      sel:
+        type: array
+        items:
+          $ref: '#/definitions/SEL'
+      mzt:
+        type: array
+        items:
+          $ref: '#/definitions/MZT'
+      mnzt:
+        type: array
+        items:
+          $ref: '#/definitions/MNZT'
+      ruri:
+        type: array
+        items:
+          $ref: '#/definitions/RURI'
+      rdri:
+        type: array
+        items:
+          $ref: '#/definitions/RDRI'
+      nto:
+        type: array
+        items:
+          $ref: '#/definitions/NTO'
+      ntb:
+        type: array
+        items:
+          $ref: '#/definitions/NTB'
+      sil:
+        type: array
+        items:
+          $ref: '#/definitions/SIL'
+      mdvp:
+        type: array
+        items:
+          $ref: '#/definitions/MDVP'
+
   PN:
     title: Physical Notification
     type: object
@@ -273,17 +323,20 @@ definitions:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '10'
       levelTo:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '20'
     required:
       - timeFrom
       - timeTo
       - levelFrom
       - levelTo
+
   QPN:
     title: Quiescent Physical Notification
     type: object
@@ -300,17 +353,20 @@ definitions:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '15'
       levelTo:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '25'
     required:
       - timeFrom
       - timeTo
       - levelFrom
       - levelTo
+
   BOD:
     title: Bid-Offer Data
     type: object
@@ -327,26 +383,31 @@ definitions:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '10'
       levelTo:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '20'
       pairNumber:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '123456'
       offerPrice:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{7}.\d{2}$'
         example: '12.31'
       bidPrice:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{7}.\d{2}$'
         example: '1.77'
     required:
       - timeFrom
@@ -356,6 +417,7 @@ definitions:
       - pairNumber
       - offerPrice
       - bidPrice
+
   MEL:
     title: Maximum Export Limit
     type: object
@@ -372,17 +434,20 @@ definitions:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '1977'
       maximumExportLevelTo:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '2010'
     required:
       - timeFrom
       - timeTo
       - maximumExportLevelFrom
       - maximumExportLevelTo
+
   MIL:
     title: Maximum Import Limit
     type: object
@@ -399,17 +464,276 @@ definitions:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '1977'
       maximumImportLevelTo:
         type: string
         minLength: 0
         maxLength: 10
+        pattern: '^\d{10}$'
         example: '2010'
+
     required:
       - timeFrom
       - timeTo
       - maximumImportLevelFrom
       - maximumImportLevelTo
+
+  RURE:
+    title: 'Run Up Rate Export'
+    type: object
+    properties:
+      rate1:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0015.0'
+      elBow2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/+|-/d{9}$'
+        example: '+0140'
+      rate2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0000.2'
+      elBow3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/+|-/d{9}$'
+        example: '+0145'
+      rate3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0013.8'
+    required:
+      - rate1
+
+  RDRE:
+    title: 'Run Down Rate Export'
+    type: object
+    properties:
+      rate1:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0010.0'
+      elBow2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '+0300'
+      rate2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0010.0'
+      elBow3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/+|-/d{9}$'
+        example: '+0200'
+      rate3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0099.0'
+    required:
+      - rate1
+
+  NDZ:
+    title: 'Notice to Deviate From Zero'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       minLength: 0
+       maxLength: 10
+       pattern: '^\d{10}$'
+       example: '030'
+    required:
+      - timeValue
+
+  SEL:
+    title: 'Stable Export Limit'
+    type: object
+    properties:
+      MWlevel:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/+|-/d{9}$'
+        example: '+00000050'
+    required:
+     - MWlevel
+
+  MZT:
+    title: 'Minimum Zero Time'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       minLength: 0
+       maxLength: 10
+       pattern: '^\d{10}$'
+       example: '060'
+    required:
+      - timeValue
+
+  MNZT:
+    title: 'Minimum Non Zero Time'
+    type: object
+    properties:
+      timeValue:
+       type: string
+       minLength: 0
+       maxLength: 10
+       pattern: '^\d{10}$'
+       example: '248'
+    required:
+      - timeValue
+
+  RURI:
+    title: 'Run Up Rate Import'
+    type: object
+    properties:
+      rate1:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0015.0'
+      elBow2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '+0045'
+      rate2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0000.4'
+      elBow3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '+0069'
+      rate3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0003.2'
+    required:
+      - rate1
+
+  RDRI:
+    title: 'Run Down Rate Import'
+    type: object
+    properties:
+      rate1:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0005.6'
+      elBow2:
+        type: string
+        minLength: 0
+        maxLength: 5
+        pattern: '^\/+|-/d{4}$'
+        example: '+0012'
+      rate2:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '0.6'
+      elBow3:
+        type: string
+        minLength: 0
+        maxLength: 5
+        pattern: '^\/+|-/d{4}$'
+        example: '+0012'
+      rate3:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/d{8}./d{1}$'
+        example: '2.3'
+    required:
+      - rate1
+
+  NTO:
+    title: 'Notice to Deliver Offers'
+    type: object
+    properties:
+      timeValue:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\d{10}$'
+        example: '002'
+    required:
+      - timeValue
+
+  NTB:
+    title: 'Notice to Deliver Bids'
+    type: object
+    properties:
+      timeValue:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\d{10}$'
+        example: '002'
+    required:
+      - timeValue
+
+  SIL:
+    title: 'Stable Export Limit'
+    type: object
+    properties:
+      MWlevel:
+        type: string
+        minLength: 0
+        maxLength: 10
+        pattern: '^\/+|-/d{9}$'
+        example: '+00000000'
+    required:
+     - MWlevel
+
+  MDVP:
+    title: 'Maximum Delivery Volume'
+    type: object
+    properties:
+      MDV:
+        type: string
+        title: 'Max Delivery Volume (MW hours)'
+        example: '8789809811'
+      MDP:
+        type: string
+        title: 'Max. Delivery Period (minutes)'
+        example: '878'
+    required:
+     - MDV
+     - MDP
+
   Response:
     title: Successful Submission Response
     type: object
@@ -417,36 +741,55 @@ definitions:
       version:
         type: string
         example: '1.0'
+      sequence:
+        type: string
+        minLength: 5
+        maxLength: 5
+        pattern: '^\d{5}$'
+        example: '01234'
+      uniqueTraceId:
+        type: string
+        example: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
       timestamp:
         type: string
-        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
+        format: date-time
         example: '2018-10-11T01:02:03.456Z'
     required:
       - version
+      - sequence
+      - uniqueTraceId
       - timestamp
+
   Error:
     title: Error payload
     type: object
     required:
       - version
+      - uniqueTraceId
       - code
       - message
       - detail
       - timestamp
     properties:
+      message:
+        type: string
+        example: 'Error message'
       version:
         type: string
         example: '1.0'
       code:
         type: string
+        minLength: 3
+        maxLength: 4
+        pattern: '^\d{4}$'
         example: '000'
-      message:
-        type: string
-        example: 'Error message'
       detail:
         type: string
         example: 'Error detailed information'
+      uniqueTraceId:
+        type: string
+        example: 'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce'
       timestamp:
         type: string
-        pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.:\d{3}Z$'
+        format: date-time
         example: '2018-10-11T01:02:03.456Z'
